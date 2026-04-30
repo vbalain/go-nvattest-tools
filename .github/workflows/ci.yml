@@ -46,12 +46,18 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: 'stable'
+          go-version: '1.22' # Pin to match your project's target version
+          cache: true
+      - name: Install libxml2
+        # libxml2 is needed if any linted code uses CGO bindings for it
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libxml2-dev
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
           version: latest
-          # Ensures CGO-based packages like server/rim are linted correctly
+          # Ensure CGO is enabled for linting since your project uses it
           args: --timeout=5m
 
   tidy:
